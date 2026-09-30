@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ batch.name }}{% endblock %}
+{% block page_title %}{{ batch.name }}{% endblock %}
+{% block content %}
+<div class="row g-3 mb-4">
+  <div class="col-lg-4">
+    <div class="card p-3">
+      <p><strong>Course</strong><br>{{ batch.course|default:"—" }}</p>
+      <p><strong>Trainer</strong><br>{{ batch.trainer|default:"Unassigned" }}</p>
+      <p><strong>Timing</strong><br>{{ batch.timing }}</p>
+      <p><strong>Dates</strong><br>{{ batch.start_date }} {% if batch.end_date %}– {{ batch.end_date }}{% endif %}</p>
+      <p class="mb-0"><strong>Status</strong><br><span class="badge-status badge-{{ batch.status|lower }}">{{ batch.get_status_display }}</span></p>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <h2 class="section-heading">Roster ({{ roster|length }})</h2>
+    <div class="table-card">
+      <table class="tpms-table">
+        <thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Attendance</th></tr></thead>
+        <tbody>
+        {% for s in roster %}
+          <tr>
+            <td><a href="{% url 'students:detail' s.pk %}">{{ s.full_name }}</a></td>
+            <td>{{ s.email }}</td>
+            <td><span class="badge-status badge-{{ s.status|lower }}">{{ s.get_status_display }}</span></td>
+            <td>{% if s.attendance_percentage is not None %}{{ s.attendance_percentage }}%{% else %}—{% endif %}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4" class="text-muted">No students assigned to this batch yet.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

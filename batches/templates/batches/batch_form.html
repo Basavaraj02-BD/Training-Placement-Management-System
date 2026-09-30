@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Edit batch{% else %}Add batch{% endif %}{% endblock %}
+{% block page_title %}{% if object %}Edit batch{% else %}Add batch{% endif %}{% endblock %}
+{% block content %}
+<div class="form-card">
+  <form method="post">
+    {% csrf_token %}
+    <div class="row g-3">
+      <div class="col-md-6"><label>Batch name</label>{{ form.name }}</div>
+      <div class="col-md-6"><label>Course</label>{{ form.course }}</div>
+      <div class="col-md-6"><label>Trainer</label>{{ form.trainer }}</div>
+      <div class="col-md-6"><label>Status</label>{{ form.status }}</div>
+      <div class="col-12"><label>Timing</label>{{ form.timing }}</div>
+      <div class="col-md-4"><label>Start date</label>{{ form.start_date }}</div>
+      <div class="col-md-4"><label>End date</label>{{ form.end_date }}</div>
+      <div class="col-md-4"><label>Max students</label>{{ form.max_students }}</div>
+    </div>
+    <div class="mt-4">
+      <button type="submit" class="btn btn-primary">Save batch</button>
+      <a href="{% url 'batches:list' %}" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

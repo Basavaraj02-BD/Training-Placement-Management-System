@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Update application{% else %}Add application{% endif %}{% endblock %}
+{% block page_title %}{% if object %}Update application{% else %}Add application{% endif %}{% endblock %}
+{% block content %}
+<div class="form-card">
+  <form method="post">
+    {% csrf_token %}
+    <div class="row g-3">
+      <div class="col-md-6"><label>Student</label>{{ form.student }}</div>
+      <div class="col-md-6"><label>Job posting</label>{{ form.job }}</div>
+      <div class="col-md-6"><label>Interview status</label>{{ form.interview_status }}</div>
+      <div class="col-md-6"><label>Selection status</label>{{ form.selection_status }}</div>
+      <div class="col-md-6"><label>Offer CTC (LPA)</label>{{ form.offer_ctc }}</div>
+      <div class="col-md-6"><label>Remarks</label>{{ form.remarks }}</div>
+    </div>
+    <div class="mt-4">
+      <button type="submit" class="btn btn-primary">Save application</button>
+      <a href="{% url 'placements:application_list' %}" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

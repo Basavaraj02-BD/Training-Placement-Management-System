@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Interview feedback{% endblock %}
+{% block page_title %}Feedback — {{ object.student }}{% endblock %}
+{% block content %}
+<div class="form-card">
+  <p style="color:var(--text-muted); margin-top:-0.5rem;">{{ object.get_round_type_display }} round on {{ object.interview_date }} with {{ object.interviewer_name }}</p>
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3 form-check">
+      {{ form.attended }}
+      <label class="form-check-label" for="{{ form.attended.id_for_label }}">Student attended</label>
+    </div>
+    <div class="mb-3"><label>Score (out of 10)</label>{{ form.score }}</div>
+    <div class="mb-3"><label>Feedback</label>{{ form.feedback }}</div>
+    <button type="submit" class="btn btn-primary">Save feedback</button>
+    <a href="{% url 'interviews:list' %}" class="btn btn-outline-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}

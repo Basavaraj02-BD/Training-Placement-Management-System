@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Students{% endblock %}
+{% block page_title %}Students{% endblock %}
+{% block content %}
+<div style="display:flex; justify-content:space-between; align-items:end; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
+  <form class="d-flex gap-2" method="get">
+    <input type="text" name="q" value="{{ q }}" class="form-control form-control-sm" placeholder="Search name, email, phone" style="min-width:220px;">
+    <select name="status" class="form-select form-select-sm">
+      <option value="">All statuses</option>
+      {% for value, label in status_choices %}
+        <option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <button class="btn btn-sm btn-outline-secondary" type="submit">Filter</button>
+  </form>
+  <a href="{% url 'students:add' %}" class="btn btn-primary btn-sm">Add student</a>
+</div>
+
+<div class="table-card">
+  <table class="tpms-table">
+    <thead><tr><th>Name</th><th>Course</th><th>Batch</th><th>Phone</th><th>Status</th><th>Attendance</th><th></th></tr></thead>
+    <tbody>
+    {% for s in students %}
+      <tr>
+        <td><a href="{% url 'students:detail' s.pk %}">{{ s.full_name }}</a></td>
+        <td>{{ s.course|default:"—" }}</td>
+        <td>{{ s.batch|default:"—" }}</td>
+        <td>{{ s.phone }}</td>
+        <td><span class="badge-status badge-{{ s.status|lower }}">{{ s.get_status_display }}</span></td>
+        <td>{% if s.attendance_percentage is not None %}{{ s.attendance_percentage }}%{% else %}—{% endif %}</td>
+        <td class="text-end">
+          <a href="{% url 'students:edit' s.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+          <a href="{% url 'students:delete' s.pk %}" class="btn btn-sm btn-outline-secondary">Delete</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="7"><div class="empty-state"><div class="empty-icon">—</div>No students yet. Add the first one to get started.</div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "partials/pagination.html" %}
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Edit interview{% else %}Schedule interview{% endif %}{% endblock %}
+{% block page_title %}{% if object %}Edit interview{% else %}Schedule mock interview{% endif %}{% endblock %}
+{% block content %}
+<div class="form-card">
+  <form method="post">
+    {% csrf_token %}
+    <div class="row g-3">
+      <div class="col-md-6"><label>Student</label>{{ form.student }}</div>
+      <div class="col-md-6"><label>Batch</label>{{ form.batch }}</div>
+      <div class="col-md-4"><label>Date</label>{{ form.interview_date }}</div>
+      <div class="col-md-4"><label>Time</label>{{ form.interview_time }}</div>
+      <div class="col-md-4"><label>Round</label>{{ form.round_type }}</div>
+      <div class="col-12"><label>Interviewer</label>{{ form.interviewer_name }}</div>
+    </div>
+    <div class="mt-4">
+      <button type="submit" class="btn btn-primary">Save</button>
+      <a href="{% url 'interviews:list' %}" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

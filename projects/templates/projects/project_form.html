@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Edit project{% else %}Add project{% endif %}{% endblock %}
+{% block page_title %}{% if object %}Edit project{% else %}Add project{% endif %}{% endblock %}
+{% block content %}
+<div class="form-card">
+  <form method="post">
+    {% csrf_token %}
+    <div class="row g-3">
+      <div class="col-12"><label>Title</label>{{ form.title }}</div>
+      <div class="col-12"><label>Description</label>{{ form.description }}</div>
+      <div class="col-md-6"><label>Batch</label>{{ form.batch }}</div>
+      <div class="col-md-6"><label>Status</label>{{ form.status }}</div>
+      <div class="col-md-6"><label>Start date</label>{{ form.start_date }}</div>
+      <div class="col-md-6"><label>Submission date</label>{{ form.submission_date }}</div>
+      <div class="col-12"><label>Team (students)</label>{{ form.students }}</div>
+    </div>
+    <div class="mt-4">
+      <button type="submit" class="btn btn-primary">Save project</button>
+      <a href="{% url 'projects:list' %}" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

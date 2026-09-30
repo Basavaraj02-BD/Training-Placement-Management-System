@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Attendance history{% endblock %}
+{% block page_title %}Attendance{% endblock %}
+{% block content %}
+{% include "attendance/_subnav.html" %}
+
+<form method="get" class="mb-3">
+  <select name="batch" class="form-select form-select-sm" style="max-width:260px;" onchange="this.form.submit()">
+    <option value="">All batches</option>
+    {% for b in batches %}
+      <option value="{{ b.pk }}" {% if batch_id == b.id|stringformat:"s" %}selected{% endif %}>{{ b.name }}</option>
+    {% endfor %}
+  </select>
+</form>
+
+<div class="table-card">
+  <table class="tpms-table">
+    <thead><tr><th>Student</th><th>Batch</th><th>Date</th><th>Status</th></tr></thead>
+    <tbody>
+    {% for r in records %}
+      <tr>
+        <td><a href="{% url 'students:detail' r.student.pk %}">{{ r.student }}</a></td>
+        <td>{{ r.batch }}</td>
+        <td>{{ r.date }}</td>
+        <td><span class="badge-status badge-{{ r.status|lower }}">{{ r.get_status_display }}</span></td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="4"><div class="empty-state">No attendance records yet.</div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

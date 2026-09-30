@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+
+<div class="row g-3 mb-3">
+  <div class="col-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-value" data-countup="{{ total_students }}">0</div>
+      <div class="stat-label">Total students</div>
+      <div class="stat-sub">{{ active_students }} active</div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="stat-card accent-gold">
+      <div class="stat-value" data-countup="{{ active_batches }}">0</div>
+      <div class="stat-label">Active batches</div>
+      <div class="stat-sub">{{ total_batches }} total</div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="stat-card accent-success">
+      <div class="stat-value">{% if today_pct is not None %}<span data-countup="{{ today_pct }}" data-suffix="%" data-decimals="1">0</span>{% else %}—{% endif %}</div>
+      <div class="stat-label">Today's attendance</div>
+      <div class="stat-sub">{{ today_present }} of {{ today_total }} marked present</div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="stat-card accent-info">
+      <div class="stat-value">{% if overall_pct is not None %}<span data-countup="{{ overall_pct }}" data-suffix="%" data-decimals="1">0</span>{% else %}—{% endif %}</div>
+      <div class="stat-label">Overall attendance</div>
+      <div class="stat-sub">across all batches</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-value" data-countup="{{ pending_projects }}">0</div>
+      <div class="stat-label">Projects in progress</div>
+      <div class="stat-sub">{{ total_projects }} total</div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="stat-card accent-gold">
+      <div class="stat-value" data-countup="{{ total_placed }}">0</div>
+      <div class="stat-label">Students placed</div>
+      <div class="stat-sub">{{ total_applications }} applications total</div>
+    </div>
+  </div>
+  <div class="col-12 col-lg-6">
+    <div class="stat-card" style="padding:1rem 1.15rem;">
+      <div class="stat-label mb-2">Placement pipeline</div>
+      <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+        {% for row in placement_stats %}
+          <span class="badge-status badge-{{ row.selection_status|lower }}">{{ row.count }} {{ row.selection_status|title }}</span>
+        {% empty %}
+          <span style="color:var(--text-muted); font-size:0.85rem;">No applications recorded yet.</span>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-lg-7">
+    <div class="chart-card card">
+      <div class="section-heading">Attendance trend — last 14 days</div>
+      <div id="trendSkeleton" class="chart-skeleton"></div>
+      <canvas id="trendChart" style="display:none;"></canvas>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="chart-card card">
+      <div class="section-heading">Placement pipeline</div>
+      <div id="pipelineSkeleton" class="chart-skeleton"></div>
+      <canvas id="pipelineChart" style="display:none;"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <h2 class="section-heading">Upcoming mock tests</h2>
+    <div class="table-card">
+      <table class="tpms-table">
+        <thead><tr><th>Topic</th><th>Batch</th><th>Date</th></tr></thead>
+        <tbody>
+        {% for t in upcoming_tests %}
+          <tr>
+            <td><a href="{% url 'mocktests:detail' t.pk %}">{{ t.topic }}</a></td>
+            <td>{{ t.batch }}</td>
+            <td>{{ t.test_date }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="3" class="text-muted">No upcoming mock tests scheduled.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <h2 class="section-heading">Upcoming mock interviews</h2>
+    <div class="table-card">
+      <table class="tpms-table">
+        <thead><tr><th>Student</th><th>Round</th><th>Date</th></tr></thead>
+        <tbody>
+        {% for i in upcoming_interviews %}
+          <tr>
+            <td>{{ i.student }}</td>
+            <td>{{ i.get_round_type_display }}</td>
+            <td>{{ i.interview_date }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="3" class="text-muted">No upcoming interviews scheduled.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var styles = getComputedStyle(document.documentElement);
+  var cVar = function (name) { return styles.getPropertyValue(name).trim(); };
+  Chart.defaults.font.family = "'Manrope', sans-serif";
+  Chart.defaults.color = cVar('--text-muted');
+
+  var trendLabels = {{ trend_labels_json|safe }};
+  var trendValues = {{ trend_values_json|safe }};
+  document.getElementById('trendSkeleton').style.display = 'none';
+  var trendCanvas = document.getElementById('trendChart');
+  trendCanvas.style.display = 'block';
+  new Chart(trendCanvas, {
+    type: 'line',
+    data: {
+      labels: trendLabels,
+      datasets: [{
+        label: 'Attendance %',
+        data: trendValues,
+        borderColor: cVar('--accent'),
+        backgroundColor: cVar('--accent-soft'),
+        fill: true,
+        tension: 0.35,
+        spanGaps: true,
+        pointRadius: 2,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { min: 0, max: 100, grid: { color: cVar('--border') }, ticks: { callback: function (v) { return v + '%'; } } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  var pipelineLabels = {{ pipeline_labels_json|safe }};
+  var pipelineValues = {{ pipeline_values_json|safe }};
+  document.getElementById('pipelineSkeleton').style.display = 'none';
+  var pipelineCanvas = document.getElementById('pipelineChart');
+  pipelineCanvas.style.display = 'block';
+  new Chart(pipelineCanvas, {
+    type: 'bar',
+    data: {
+      labels: pipelineLabels.length ? pipelineLabels : ['No data'],
+      datasets: [{
+        data: pipelineValues.length ? pipelineValues : [0],
+        backgroundColor: [cVar('--info'), cVar('--accent'), cVar('--success'), cVar('--danger'), cVar('--warning-text')],
+        borderRadius: 6,
+        maxBarThickness: 42,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: cVar('--border') } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+});
+</script>
+{% endblock %}

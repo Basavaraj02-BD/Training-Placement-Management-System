@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Projects{% endblock %}
+{% block page_title %}Projects{% endblock %}
+{% block content %}
+<div style="display:flex; justify-content:space-between; align-items:end; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
+  <form method="get">
+    <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+      <option value="">All statuses</option>
+      {% for value, label in status_choices %}
+        <option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </form>
+  <a href="{% url 'projects:add' %}" class="btn btn-primary btn-sm">Add project</a>
+</div>
+<div class="table-card">
+  <table class="tpms-table">
+    <thead><tr><th>Title</th><th>Batch</th><th>Team size</th><th>Status</th><th>Score</th><th></th></tr></thead>
+    <tbody>
+    {% for p in projects %}
+      <tr>
+        <td><a href="{% url 'projects:detail' p.pk %}">{{ p.title }}</a></td>
+        <td>{{ p.batch|default:"—" }}</td>
+        <td>{{ p.students.count }}</td>
+        <td><span class="badge-status badge-{{ p.status|lower }}">{{ p.get_status_display }}</span></td>
+        <td>{{ p.evaluation_score|default:"—" }}</td>
+        <td class="text-end">
+          <a href="{% url 'projects:evaluate' p.pk %}" class="btn btn-sm btn-gold">Evaluate</a>
+          <a href="{% url 'projects:edit' p.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+          <a href="{% url 'projects:delete' p.pk %}" class="btn btn-sm btn-outline-secondary">Delete</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6"><div class="empty-state">No projects yet.</div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

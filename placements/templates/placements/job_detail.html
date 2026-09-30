@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{ job.job_role }}{% endblock %}
+{% block page_title %}{{ job.job_role }} @ {{ job.company }}{% endblock %}
+{% block content %}
+<div class="row g-3 mb-4">
+  <div class="col-lg-4">
+    <div class="card p-3">
+      <p><strong>Job code</strong><br>{{ job.job_code }}</p>
+      <p><strong>CTC offered</strong><br>{{ job.ctc_offered }} LPA</p>
+      <p><strong>Eligibility</strong><br>{{ job.eligibility_criteria|default:"—" }}</p>
+      <p class="mb-0"><strong>Status</strong><br><span class="badge-status badge-{{ job.status|lower }}">{{ job.get_status_display }}</span></p>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <h2 class="section-heading">Applicants</h2>
+    <div class="table-card">
+      <table class="tpms-table">
+        <thead><tr><th>Student</th><th>Interview status</th><th>Selection status</th><th>Offer CTC</th></tr></thead>
+        <tbody>
+        {% for a in applications %}
+          <tr>
+            <td><a href="{% url 'students:detail' a.student.pk %}">{{ a.student }}</a></td>
+            <td>{{ a.get_interview_status_display }}</td>
+            <td><span class="badge-status badge-{{ a.selection_status|lower }}">{{ a.get_selection_status_display }}</span></td>
+            <td>{% if a.offer_ctc %}{{ a.offer_ctc }} LPA{% else %}—{% endif %}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4" class="text-muted">No applications for this role yet.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Mock interviews{% endblock %}
+{% block page_title %}Mock interviews{% endblock %}
+{% block content %}
+<div style="display:flex; justify-content:space-between; align-items:end; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
+  <form method="get">
+    <select name="round" class="form-select form-select-sm" onchange="this.form.submit()">
+      <option value="">All rounds</option>
+      {% for value, label in round_choices %}
+        <option value="{{ value }}" {% if round == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </form>
+  <a href="{% url 'interviews:add' %}" class="btn btn-primary btn-sm">Schedule interview</a>
+</div>
+<div class="table-card">
+  <table class="tpms-table">
+    <thead><tr><th>Student</th><th>Round</th><th>Date</th><th>Interviewer</th><th>Attended</th><th>Score</th><th></th></tr></thead>
+    <tbody>
+    {% for i in interviews %}
+      <tr>
+        <td><a href="{% url 'students:detail' i.student.pk %}">{{ i.student }}</a></td>
+        <td>{{ i.get_round_type_display }}</td>
+        <td>{{ i.interview_date }} {{ i.interview_time }}</td>
+        <td>{{ i.interviewer_name }}</td>
+        <td>{% if i.attended %}<span class="badge-status badge-present">Yes</span>{% else %}<span class="badge-status badge-pending">Pending</span>{% endif %}</td>
+        <td>{{ i.score|default:"—" }}{% if i.score %}/10{% endif %}</td>
+        <td class="text-end">
+          <a href="{% url 'interviews:feedback' i.pk %}" class="btn btn-sm btn-gold">Add feedback</a>
+          <a href="{% url 'interviews:edit' i.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+          <a href="{% url 'interviews:delete' i.pk %}" class="btn btn-sm btn-outline-secondary">Delete</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="7"><div class="empty-state">No mock interviews scheduled yet.</div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

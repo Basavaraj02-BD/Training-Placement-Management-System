@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Low attendance{% endblock %}
+{% block page_title %}Attendance{% endblock %}
+{% block content %}
+{% include "attendance/_subnav.html" %}
+<p style="color:var(--text-muted); margin-top:-0.5rem;">Active students below {{ threshold }}% attendance.</p>
+
+<div class="table-card">
+  <table class="tpms-table">
+    <thead><tr><th>Student</th><th>Batch</th><th>Attendance %</th></tr></thead>
+    <tbody>
+    {% for row in rows %}
+      <tr>
+        <td><a href="{% url 'students:detail' row.student.pk %}">{{ row.student }}</a></td>
+        <td>{{ row.student.batch|default:"—" }}</td>
+        <td><span class="badge-status badge-absent">{{ row.percentage }}%</span></td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="3"><div class="empty-state">No students currently below the threshold. Nice work.</div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

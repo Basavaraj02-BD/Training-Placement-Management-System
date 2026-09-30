@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Attendance report{% endblock %}
+{% block page_title %}Attendance{% endblock %}
+{% block content %}
+{% include "attendance/_subnav.html" %}
+
+<form method="get" class="mb-3">
+  <select name="batch" class="form-select form-select-sm" style="max-width:260px;" onchange="this.form.submit()">
+    <option value="">Select a batch…</option>
+    {% for b in batches %}
+      <option value="{{ b.pk }}" {% if batch_id == b.id|stringformat:"s" %}selected{% endif %}>{{ b.name }}</option>
+    {% endfor %}
+  </select>
+</form>
+
+{% if selected_batch %}
+<div class="table-card">
+  <table class="tpms-table">
+    <thead><tr><th>Student</th><th>Present</th><th>Total marked</th><th>Attendance %</th></tr></thead>
+    <tbody>
+    {% for row in report_rows %}
+      <tr>
+        <td><a href="{% url 'students:detail' row.student.pk %}">{{ row.student }}</a></td>
+        <td>{{ row.present }}</td>
+        <td>{{ row.total }}</td>
+        <td>{% if row.percentage is not None %}{{ row.percentage }}%{% else %}No data{% endif %}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="4" class="text-muted">No students in this batch.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">Select a batch to see its attendance report.</div>
+{% endif %}
+{% endblock %}

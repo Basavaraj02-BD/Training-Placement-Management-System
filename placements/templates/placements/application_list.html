@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Applications{% endblock %}
+{% block page_title %}Placement applications{% endblock %}
+{% block content %}
+<div style="display:flex; justify-content:space-between; align-items:end; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
+  <form method="get">
+    <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+      <option value="">All statuses</option>
+      {% for value, label in status_choices %}
+        <option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </form>
+  {% if user.is_superuser or user.role == 'ADMIN' %}
+  <a href="{% url 'placements:application_add' %}" class="btn btn-primary btn-sm">Add application</a>
+  {% endif %}
+</div>
+<div class="table-card">
+  <table class="tpms-table">
+    <thead><tr><th>Student</th><th>Company</th><th>Role</th><th>Interview status</th><th>Selection status</th><th>Offer CTC</th><th></th></tr></thead>
+    <tbody>
+    {% for a in applications %}
+      <tr>
+        <td><a href="{% url 'students:detail' a.student.pk %}">{{ a.student }}</a></td>
+        <td>{{ a.job.company }}</td>
+        <td>{{ a.job.job_role }}</td>
+        <td>{{ a.get_interview_status_display }}</td>
+        <td><span class="badge-status badge-{{ a.selection_status|lower }}">{{ a.get_selection_status_display }}</span></td>
+        <td>{% if a.offer_ctc %}{{ a.offer_ctc }} LPA{% else %}—{% endif %}</td>
+        <td class="text-end">
+          {% if user.is_superuser or user.role == 'ADMIN' %}
+          <a href="{% url 'placements:application_edit' a.pk %}" class="btn btn-sm btn-outline-secondary">Update</a>
+          <a href="{% url 'placements:application_delete' a.pk %}" class="btn btn-sm btn-outline-secondary">Delete</a>
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="7"><div class="empty-state">No placement applications recorded yet.</div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

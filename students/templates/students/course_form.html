@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Edit course{% else %}Add course{% endif %}{% endblock %}
+{% block page_title %}{% if object %}Edit course{% else %}Add course{% endif %}{% endblock %}
+{% block content %}
+<div class="form-card">
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3"><label>Name</label>{{ form.name }}</div>
+    <div class="mb-3"><label>Duration (weeks)</label>{{ form.duration_weeks }}</div>
+    <div class="mb-3"><label>Description</label>{{ form.description }}</div>
+    <button type="submit" class="btn btn-primary">Save course</button>
+    <a href="{% url 'students:course_list' %}" class="btn btn-outline-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}{{ student.full_name }}{% endblock %}
+{% block page_title %}{{ student.full_name }}{% endblock %}
+{% block content %}
+
+<div class="row g-3 mb-4">
+  <div class="col-lg-4">
+    <div class="card p-3">
+      <p><strong>Email</strong><br>{{ student.email }}</p>
+      <p><strong>Phone</strong><br>{{ student.phone }}</p>
+      <p><strong>Course</strong><br>{{ student.course|default:"—" }}</p>
+      <p><strong>Batch</strong><br>{{ student.batch|default:"—" }}</p>
+      <p><strong>Status</strong><br><span class="badge-status badge-{{ student.status|lower }}">{{ student.get_status_display }}</span></p>
+      <p class="mb-0"><strong>Attendance</strong><br>{% if student.attendance_percentage is not None %}{{ student.attendance_percentage }}%{% else %}No records yet{% endif %}</p>
+      <div class="mt-3">
+        <a href="{% url 'students:edit' student.pk %}" class="btn btn-sm btn-outline-secondary">Edit profile</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <h2 class="section-heading">Mock test performance</h2>
+    <div class="table-card mb-4">
+      <table class="tpms-table">
+        <thead><tr><th>Test</th><th>Date</th><th>Marks</th><th>%</th></tr></thead>
+        <tbody>
+        {% for r in test_results %}
+          <tr><td>{{ r.test.topic }}</td><td>{{ r.test.test_date }}</td><td>{{ r.marks_obtained }}/{{ r.test.total_marks }}</td><td>{{ r.percentage }}%</td></tr>
+        {% empty %}
+          <tr><td colspan="4" class="text-muted">No test results yet.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="section-heading">Mock interviews</h2>
+    <div class="table-card mb-4">
+      <table class="tpms-table">
+        <thead><tr><th>Round</th><th>Date</th><th>Attended</th><th>Score</th><th>Feedback</th></tr></thead>
+        <tbody>
+        {% for i in interviews %}
+          <tr><td>{{ i.get_round_type_display }}</td><td>{{ i.interview_date }}</td><td>{% if i.attended %}Yes{% else %}No{% endif %}</td><td>{{ i.score|default:"—" }}/10</td><td>{{ i.feedback|truncatewords:12|default:"—" }}</td></tr>
+        {% empty %}
+          <tr><td colspan="5" class="text-muted">No interviews yet.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="section-heading">Projects</h2>
+    <div class="table-card mb-4">
+      <table class="tpms-table">
+        <thead><tr><th>Title</th><th>Status</th><th>Evaluation score</th></tr></thead>
+        <tbody>
+        {% for p in projects %}
+          <tr><td><a href="{% url 'projects:detail' p.pk %}">{{ p.title }}</a></td><td><span class="badge-status badge-{{ p.status|lower }}">{{ p.get_status_display }}</span></td><td>{{ p.evaluation_score|default:"—" }}</td></tr>
+        {% empty %}
+          <tr><td colspan="3" class="text-muted">Not on any project yet.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="section-heading">Placement applications</h2>
+    <div class="table-card">
+      <table class="tpms-table">
+        <thead><tr><th>Company</th><th>Role</th><th>Interview status</th><th>Selection status</th><th>Offer CTC</th></tr></thead>
+        <tbody>
+        {% for a in applications %}
+          <tr><td>{{ a.job.company }}</td><td>{{ a.job.job_role }}</td><td>{{ a.get_interview_status_display }}</td><td><span class="badge-status badge-{{ a.selection_status|lower }}">{{ a.get_selection_status_display }}</span></td><td>{% if a.offer_ctc %}{{ a.offer_ctc }} LPA{% else %}—{% endif %}</td></tr>
+        {% empty %}
+          <tr><td colspan="5" class="text-muted">No placement applications yet.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

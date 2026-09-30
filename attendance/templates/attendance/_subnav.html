@@ -1,0 +1,6 @@
+<div style="display:flex; gap:0.4rem; margin-bottom:1.25rem; flex-wrap:wrap;">
+  <a href="{% url 'attendance:mark' %}" class="btn btn-sm {% if request.resolver_match.url_name == 'mark' %}btn-primary{% else %}btn-outline-secondary{% endif %}">Mark attendance</a>
+  <a href="{% url 'attendance:history' %}" class="btn btn-sm {% if request.resolver_match.url_name == 'history' %}btn-primary{% else %}btn-outline-secondary{% endif %}">History</a>
+  <a href="{% url 'attendance:report' %}" class="btn btn-sm {% if request.resolver_match.url_name == 'report' %}btn-primary{% else %}btn-outline-secondary{% endif %}">Batch report</a>
+  <a href="{% url 'attendance:low' %}" class="btn btn-sm {% if request.resolver_match.url_name == 'low' %}btn-primary{% else %}btn-outline-secondary{% endif %}">Low attendance</a>
+</div>

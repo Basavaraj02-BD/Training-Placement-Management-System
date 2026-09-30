@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Edit job posting{% else %}Add job posting{% endif %}{% endblock %}
+{% block page_title %}{% if object %}Edit job posting{% else %}Add job posting{% endif %}{% endblock %}
+{% block content %}
+<div class="form-card">
+  <form method="post">
+    {% csrf_token %}
+    <div class="row g-3">
+      <div class="col-md-6"><label>Company</label>{{ form.company }}</div>
+      <div class="col-md-6"><label>Job role</label>{{ form.job_role }}</div>
+      <div class="col-md-6"><label>Job code</label>{{ form.job_code }}</div>
+      <div class="col-md-6"><label>CTC offered (LPA)</label>{{ form.ctc_offered }}</div>
+      <div class="col-md-6"><label>Eligibility criteria</label>{{ form.eligibility_criteria }}</div>
+      <div class="col-md-6"><label>Status</label>{{ form.status }}</div>
+      <div class="col-12"><label>Description</label>{{ form.description }}</div>
+    </div>
+    <div class="mt-4">
+      <button type="submit" class="btn btn-primary">Save job posting</button>
+      <a href="{% url 'placements:job_list' %}" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

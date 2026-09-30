@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Evaluate project{% endblock %}
+{% block page_title %}Evaluate — {{ object.title }}{% endblock %}
+{% block content %}
+<div class="form-card">
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3"><label>Status</label>{{ form.status }}</div>
+    <div class="mb-3"><label>Evaluation notes</label>{{ form.trainer_evaluation }}</div>
+    <div class="mb-3"><label>Score (out of 100)</label>{{ form.evaluation_score }}</div>
+    <button type="submit" class="btn btn-primary">Save evaluation</button>
+    <a href="{% url 'projects:detail' object.pk %}" class="btn btn-outline-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Courses{% endblock %}
+{% block page_title %}Courses{% endblock %}
+{% block content %}
+<div class="mb-3"><a href="{% url 'students:course_add' %}" class="btn btn-primary btn-sm">Add course</a></div>
+<div class="table-card">
+  <table class="tpms-table">
+    <thead><tr><th>Name</th><th>Duration (weeks)</th><th>Description</th><th></th></tr></thead>
+    <tbody>
+    {% for c in courses %}
+      <tr>
+        <td>{{ c.name }}</td>
+        <td>{{ c.duration_weeks }}</td>
+        <td>{{ c.description|truncatewords:15|default:"—" }}</td>
+        <td class="text-end">
+          <a href="{% url 'students:course_edit' c.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+          <a href="{% url 'students:course_delete' c.pk %}" class="btn btn-sm btn-outline-secondary">Delete</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="4"><div class="empty-state">No courses yet.</div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Log in{% endblock %}
+{% block guest_content %}
+<div style="min-height:100vh; display:flex; align-items:center; justify-content:center; background:radial-gradient(circle at 20% 20%, var(--brand-2), var(--brand) 70%); padding:1.5rem;">
+  <div class="card" style="padding:2.25rem; width:100%; max-width:380px;">
+    <h1 class="brand-font" style="font-size:1.4rem; margin-bottom:0.1rem;">TrackPoint</h1>
+    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:1.5rem;">Training &amp; Placement Management</p>
+    {% if form.errors %}
+      <div class="alert alert-danger py-2" style="font-size:0.85rem;">Your username or password didn't match. Please try again.</div>
+    {% endif %}
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="id_username">Username</label>
+        <input type="text" name="username" class="form-control" id="id_username" autofocus required>
+      </div>
+      <div class="mb-3">
+        <label for="id_password">Password</label>
+        <input type="password" name="password" class="form-control" id="id_password" required>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Log in</button>
+      <input type="hidden" name="next" value="{{ next }}">
+    </form>
+    <p style="font-size:0.78rem; color:var(--text-muted); margin-top:1.25rem; margin-bottom:0;">
+      Demo logins — Admin: <code>admin / Admin@123</code><br>Trainer: <code>trainer1 / Trainer@123</code>
+    </p>
+  </div>
+</div>
+{% endblock %}

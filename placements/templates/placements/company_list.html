@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Companies{% endblock %}
+{% block page_title %}Companies{% endblock %}
+{% block content %}
+{% if user.is_superuser or user.role == 'ADMIN' %}
+<div class="mb-3"><a href="{% url 'placements:company_add' %}" class="btn btn-primary btn-sm">Add company</a></div>
+{% endif %}
+<div class="table-card">
+  <table class="tpms-table">
+    <thead><tr><th>Name</th><th>Contact email</th><th>Phone</th><th>Open roles</th><th></th></tr></thead>
+    <tbody>
+    {% for c in companies %}
+      <tr>
+        <td>{{ c.name }}</td>
+        <td>{{ c.contact_email|default:"—" }}</td>
+        <td>{{ c.contact_phone|default:"—" }}</td>
+        <td>{{ c.job_postings.count }}</td>
+        <td class="text-end">
+          {% if user.is_superuser or user.role == 'ADMIN' %}
+          <a href="{% url 'placements:company_edit' c.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+          <a href="{% url 'placements:company_delete' c.pk %}" class="btn btn-sm btn-outline-secondary">Delete</a>
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="5"><div class="empty-state">No companies added yet.</div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

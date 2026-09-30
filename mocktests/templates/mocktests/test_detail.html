@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ test.topic }}{% endblock %}
+{% block page_title %}{{ test.topic }}{% endblock %}
+{% block content %}
+<div class="row g-3 mb-4">
+  <div class="col-lg-4">
+    <div class="card p-3">
+      <p><strong>Batch</strong><br>{{ test.batch }}</p>
+      <p><strong>Date &amp; time</strong><br>{{ test.test_date }} at {{ test.test_time }}</p>
+      <p class="mb-0"><strong>Total marks</strong><br>{{ test.total_marks }}</p>
+      <div class="mt-3"><a href="{% url 'mocktests:results' test.pk %}" class="btn btn-sm btn-gold">Record / update results</a></div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <h2 class="section-heading">Results</h2>
+    <div class="table-card">
+      <table class="tpms-table">
+        <thead><tr><th>Student</th><th>Marks</th><th>%</th></tr></thead>
+        <tbody>
+        {% for r in results %}
+          <tr><td>{{ r.student }}</td><td>{{ r.marks_obtained }}/{{ test.total_marks }}</td><td>{{ r.percentage }}%</td></tr>
+        {% empty %}
+          <tr><td colspan="3"><div class="empty-state">No results recorded yet.</div></td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Mock tests{% endblock %}
+{% block page_title %}Mock tests{% endblock %}
+{% block content %}
+<div class="mb-3"><a href="{% url 'mocktests:add' %}" class="btn btn-primary btn-sm">Schedule mock test</a></div>
+<div class="table-card">
+  <table class="tpms-table">
+    <thead><tr><th>Topic</th><th>Batch</th><th>Date</th><th>Time</th><th>Avg score</th><th></th></tr></thead>
+    <tbody>
+    {% for t in tests %}
+      <tr>
+        <td><a href="{% url 'mocktests:detail' t.pk %}">{{ t.topic }}</a></td>
+        <td>{{ t.batch }}</td>
+        <td>{{ t.test_date }}</td>
+        <td>{{ t.test_time }}</td>
+        <td>{% if t.average_score is not None %}{{ t.average_score }}/{{ t.total_marks }}{% else %}No results yet{% endif %}</td>
+        <td class="text-end">
+          <a href="{% url 'mocktests:results' t.pk %}" class="btn btn-sm btn-gold">Record results</a>
+          <a href="{% url 'mocktests:edit' t.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+          <a href="{% url 'mocktests:delete' t.pk %}" class="btn btn-sm btn-outline-secondary">Delete</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6"><div class="empty-state">No mock tests scheduled yet.</div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
