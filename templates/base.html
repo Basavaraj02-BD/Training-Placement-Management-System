@@ -1,9 +1,11 @@
-{% load static %}<!DOCTYPE html>
+{% load static %}
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem('tp-theme');document.documentElement.setAttribute('data-theme', t || 'dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/jpeg" href="{% static 'favicon.jpg' %}">
 <title>{% block title %}Dashboard{% endblock %} · TrackPoint</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -105,7 +107,10 @@
           <span class="role-badge">{{ user.get_role_display }}</span>
           <div class="avatar">{{ user.first_name|default:user.username|first|upper }}</div>
           <span class="d-none d-sm-inline">{{ user.get_full_name|default:user.username }}</span>
-          <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-secondary">Log out</a>
+          <form method="post" action="{% url 'logout' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-secondary">Log out</button>
+          </form>
         </div>
       </div>
     </div>
@@ -143,6 +148,7 @@
       {label: 'Batches', url: '{% url "batches:list" %}', group: 'Training'},
       {label: 'Mark attendance', url: '{% url "attendance:mark" %}', group: 'Training'},
       {label: 'Attendance history', url: '{% url "attendance:history" %}', group: 'Training'},
+      {label: 'Attendance report', url: '{% url "attendance:report" %}', group: 'Training'},
       {label: 'Low attendance', url: '{% url "attendance:low" %}', group: 'Training'},
       {label: 'Mock tests', url: '{% url "mocktests:list" %}', group: 'Assessments'},
       {label: 'Mock interviews', url: '{% url "interviews:list" %}', group: 'Assessments'},
